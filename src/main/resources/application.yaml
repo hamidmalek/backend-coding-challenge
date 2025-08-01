@@ -1,0 +1,15 @@
+spring:
+  jpa:
+    properties:
+      jakarta.persistence.validation.mode: auto
+app:
+  validation:
+    movie:
+      title:
+        max-length: 200
+      year:
+        min: 1888
+        max: 2100
+    rating:
+      min: 1
+      max: 10
