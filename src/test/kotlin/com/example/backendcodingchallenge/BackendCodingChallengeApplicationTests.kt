@@ -6,8 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest
 @SpringBootTest
 class BackendCodingChallengeApplicationTests {
 
+    @Suppress("EmptyFunctionBlock")
     @Test
     fun contextLoads() {
     }
-
 }
