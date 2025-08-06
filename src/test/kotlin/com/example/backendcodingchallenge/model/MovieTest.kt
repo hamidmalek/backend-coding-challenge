@@ -7,16 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.util.*
 
-@SpringBootTest(
-    properties = [
-        "spring.autoconfigure.exclude=" +
-            "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration," +
-            "org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration"
-    ]
-)
-class MovieTest(
-    @Autowired private val validator: Validator
-) {
+@SpringBootTest
+class MovieTest {
+
+    @Autowired
+    lateinit var validator: Validator
 
     @Test
     fun `valid movie passes validation`() {

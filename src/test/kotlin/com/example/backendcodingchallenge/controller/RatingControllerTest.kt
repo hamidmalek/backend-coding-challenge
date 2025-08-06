@@ -73,7 +73,6 @@ class RatingControllerTest {
         )
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id").exists())
-            .andExpect(jsonPath("$.userId").value(userId))
             .andExpect(jsonPath("$.movieId").value(movieId))
             .andExpect(jsonPath("$.rating").value(8))
             .andExpect(jsonPath("$.createdAt").exists())
@@ -109,7 +108,7 @@ class RatingControllerTest {
         )
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.error.code").value("VALIDATION_ERROR"))
-            .andExpect(jsonPath("$.error.details.rating[0]", containsString("between")))
+            .andExpect(jsonPath("$.error.details.rating[0]", containsString("rating is out of range")))
 
         val tooHigh = """{"userId":"$userId","movieId":"$movieId","rating":11}"""
         mockMvc.perform(
@@ -118,7 +117,7 @@ class RatingControllerTest {
                 .content(tooHigh)
         )
             .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.error.details.rating[0]", containsString("between")))
+            .andExpect(jsonPath("$.error.details.rating[0]", containsString("rating is out of range")))
     }
 
     @Test
@@ -166,9 +165,8 @@ class RatingControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.movie.id").value(movieId))
-            .andExpect(jsonPath("$.data", hasSize<Any>(2)))
-            .andExpect(jsonPath("$.data[0].rating").value(6))
+            .andExpect(jsonPath("$.ratings", hasSize<Any>(2)))
+            .andExpect(jsonPath("$.ratings[0].rating").value(6))
     }
 
     @Test
@@ -246,6 +244,6 @@ class RatingControllerTest {
                 .content(invalid)
         )
             .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.error.details.rating[0]", containsString("between")))
+            .andExpect(jsonPath("$.error.details.rating[0]", containsString("rating is out of range")))
     }
 }

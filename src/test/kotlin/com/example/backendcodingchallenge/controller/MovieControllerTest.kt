@@ -1,7 +1,9 @@
 package com.example.backendcodingchallenge.controller
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import jakarta.transaction.Transactional
 import org.hamcrest.Matchers.containsString
 import org.junit.jupiter.api.BeforeEach
@@ -15,6 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.web.context.WebApplicationContext
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -22,10 +25,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 class MovieControllerTest {
 
     @Autowired
-    private lateinit var mockMvc: MockMvc
+    lateinit var context: WebApplicationContext
 
     @Autowired
-    private lateinit var objectMapper: ObjectMapper
+    private lateinit var mockMvc: MockMvc
+
+    private val objectMapper = jacksonObjectMapper()
+        .registerModule(JavaTimeModule())
+        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
 
     private val title = "Arrival"
     private val releaseYear = 2016
@@ -39,6 +46,7 @@ class MovieControllerTest {
 
     @BeforeEach
     fun setup() {
+
         val mvcResult = mockMvc.perform(
             post(createUrl)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -57,15 +65,16 @@ class MovieControllerTest {
 
     @Test
     fun `should create a new movie`() {
+        val body = """{"title":"Inception","releaseYear":2010}"""
         mockMvc.perform(
             post(createUrl)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(createBody)
+                .content(body)
         )
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id").exists())
-            .andExpect(jsonPath("$.title").value(title))
-            .andExpect(jsonPath("$.releaseYear").value(releaseYear))
+            .andExpect(jsonPath("$.title").value("Inception"))
+            .andExpect(jsonPath("$.releaseYear").value(2010))
     }
 
     @Test
@@ -92,7 +101,7 @@ class MovieControllerTest {
         )
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.error.code").value("VALIDATION_ERROR"))
-            .andExpect(jsonPath("$.error.details.title[0]", containsString("length must be")))
+            .andExpect(jsonPath("$.error.details.title[0]", containsString("title is too long")))
     }
 
     @Test
@@ -104,7 +113,7 @@ class MovieControllerTest {
                 .content(invalidPast)
         )
             .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.error.details.releaseYear[0]", containsString("between")))
+            .andExpect(jsonPath("$.error.details.releaseYear[0]", containsString("release year is out of range")))
 
         val invalidFuture = """{"title":"FutureFilm","releaseYear":3000}"""
         mockMvc.perform(
@@ -113,7 +122,7 @@ class MovieControllerTest {
                 .content(invalidFuture)
         )
             .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.error.details.releaseYear[0]", containsString("between")))
+            .andExpect(jsonPath("$.error.details.releaseYear[0]", containsString("release year is out of range")))
     }
 
     @Test
@@ -158,6 +167,7 @@ class MovieControllerTest {
             .andExpect(status().isNotFound)
     }
 
+    @Test
     fun `should allow creation when releaseYear is omitted`() {
         val noYear = """{"title":"NoYearMovie"}"""
         mockMvc.perform(
