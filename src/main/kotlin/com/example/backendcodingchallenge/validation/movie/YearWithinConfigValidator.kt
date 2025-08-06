@@ -6,13 +6,11 @@ import jakarta.validation.ConstraintValidatorContext
 import org.springframework.stereotype.Component
 
 @Component
-class YearWithinConfigValidator(
-    private val props: ValidationProperties
-) : ConstraintValidator<YearWithinConfig, Int?> {
+class YearWithinConfigValidator : ConstraintValidator<YearWithinConfig, Int?> {
 
     override fun isValid(value: Int?, context: ConstraintValidatorContext): Boolean {
-        if (value == null) return true // keep nullable semantics
-        val r = props.movie.year
+        if (value == null) return true
+        val r = ValidationProperties.movie.year
         return value in r.min..r.max
     }
 }
