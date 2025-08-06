@@ -1,0 +1,11 @@
+package com.example.backendcodingchallenge.dto
+
+import jakarta.validation.constraints.NotBlank
+
+data class CreateUserRequest(
+    @field:NotBlank(message = "Username is required")
+    val username: String,
+
+    @field:NotBlank(message = "Password is required")
+    val password: String
+)

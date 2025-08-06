@@ -15,12 +15,12 @@ data class Movie(
     @Id
     val id: UUID = UUID.randomUUID(),
 
-    @field:NotBlank
+    @field:NotBlank(message = "Title cannot be blank")
     @field:TitleMaxFromConfig
     @Column(nullable = false, length = 200)
-    val title: String,
+    val title: String = "",
 
     @field:YearWithinConfig
     @Column(name = "release_year")
-    val releaseYear: Int?
+    val releaseYear: Int? = 2000
 )

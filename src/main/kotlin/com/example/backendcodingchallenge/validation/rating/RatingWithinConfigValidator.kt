@@ -6,9 +6,7 @@ import jakarta.validation.ConstraintValidatorContext
 import org.springframework.stereotype.Component
 
 @Component
-class RatingWithinConfigValidator(
-    private val props: ValidationProperties
-) : ConstraintValidator<RatingWithinConfig, Int> {
+class RatingWithinConfigValidator : ConstraintValidator<RatingWithinConfig, Int> {
     override fun isValid(value: Int, context: ConstraintValidatorContext) =
-        value in props.rating.min..props.rating.max
+        value in ValidationProperties.rating.min..ValidationProperties.rating.max
 }

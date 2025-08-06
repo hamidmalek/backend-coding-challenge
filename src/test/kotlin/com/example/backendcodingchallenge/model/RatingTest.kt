@@ -5,21 +5,13 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.TestConstructor
 import java.time.Instant
 import java.util.*
 
-@SpringBootTest(
-    properties = [
-        "spring.autoconfigure.exclude=" +
-            "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration," +
-            "org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration"
-    ]
-)
-@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-class RatingTest(
-    @Autowired private val validator: Validator
-) {
+@SpringBootTest
+class RatingTest {
+    @Autowired
+    lateinit var validator: Validator
     private fun validUser(username: String = "alice") =
         User(username = username, password = "secret")
 
