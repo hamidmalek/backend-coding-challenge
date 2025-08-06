@@ -1,23 +1,20 @@
 package com.example.backendcodingchallenge.config
 
-import org.springframework.boot.context.properties.ConfigurationProperties
+data object ValidationProperties {
+    val movie: Movie = Movie()
+    val rating: Range = Range(1, 10)
 
-@ConfigurationProperties(prefix = "app.validation")
-data class ValidationProperties(
-    val movie: Movie = Movie(),
-    val rating: Range = Range()
-) {
     data class Movie(
-        val title: Title = Title(),
-        val year: Range = Range()
+        val title: Title = Title(200),
+        val year: Range = Range(1888, 2100)
     )
 
     data class Title(
-        val maxLength: Int = Int.MAX_VALUE
+        val maxLength: Long
     )
 
     data class Range(
-        val min: Int = 0,
-        val max: Int = Int.MAX_VALUE
+        val min: Long,
+        val max: Long
     )
 }

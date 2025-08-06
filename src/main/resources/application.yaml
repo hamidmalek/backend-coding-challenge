@@ -1,15 +1,19 @@
 spring:
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:file:./data/testdb
+    username: pguser
+    password: secret
+    driver-class-name: org.h2.Driver
   jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
     properties:
       jakarta.persistence.validation.mode: auto
-app:
-  validation:
-    movie:
-      title:
-        max-length: 200
-      year:
-        min: 1888
-        max: 2100
-    rating:
-      min: 1
-      max: 10
+      hibernate.format_sql: true
+logging:
+  level:
+    org.springframework.boot.context.config: DEBUG
